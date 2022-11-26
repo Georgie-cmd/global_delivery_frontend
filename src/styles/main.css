@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Satisfy&display=swap');
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+        /* colors */
+    --navMenuColor: white;
+
+    --navLinksColor: #27292A;
+    --navLinksHoverColor: rgb(18, 104, 18);
+    
+    --logoColor: #27292A;
+    --textColor: rgb(18, 104, 18);
+
+        /* fonts' style */
+    --mainFont: 'Dancing Script', cursive;
+    --linksFont: 'Satisfy', cursive;
+}
