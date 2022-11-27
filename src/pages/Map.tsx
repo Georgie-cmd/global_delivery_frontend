@@ -8,9 +8,10 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { io, Socket } from "socket.io-client";
     //endpoin
 import userLocation from '../utils/utils';
+import ReconnectingWebSocket from 'reconnecting-websocket';
 
 
-const ENDPOINT = 'localhost:5000'
+const ENDPOINT = 'ws://127.0.0.1:8000/wss'
 
 
 export default function MainMap() {
@@ -48,8 +49,8 @@ export default function MainMap() {
 
 
     useEffect((): any => {
-        let socket: Socket
-        socket = io(ENDPOINT)
+        // let socket: Socket
+        // socket = io(ENDPOINT)
 
         const map = new mapboxgl.Map({
             container: 'map',
@@ -101,27 +102,49 @@ export default function MainMap() {
             }), 'bottom-right'
         )
 
+            /* websocket */
+        const options = {
+                connectionTimeout: 5000,
+                maxRetries: 10,
+        }
+    
+        const ws = new ReconnectingWebSocket(ENDPOINT, [], options);
+        ws.onmessage = event => {
+            const {topic, message} = JSON.parse(event.data)
+            console.log({topic, message})
+        }
 
-            /* geotracker */
-        setInterval(() => {
-            if ("geolocation" in navigator) {
-                console.log("track position enabled")
-                navigator.geolocation.getCurrentPosition(position => {
-                    console.log(position.coords.longitude, position.coords.latitude)
+        let interval
+        ws.onopen = () => {
+                    interval = setInterval(() => {
+                        if ("geolocation" in navigator) {
+                            console.log("track position enabled")
+                            navigator.geolocation.getCurrentPosition(position => {
+                                console.log(position.coords.longitude, position.coords.latitude)
 
-                    socket.emit(userLocation(), {longitude: position.coords.longitude, latitude: position.coords.latitude})
-                })
-            } else {
-                console.log("track position DISABLED!!!")
-            }
-        }, 3000)
+                                // socket.emit(userLocation(), {longitude: position.coords.longitude, latitude: position.coords.latitude})
+
+                                ws.send(
+                                    JSON.stringify({
+                                        topic: 'test:client:heartbeat',
+                                        // correlationId: uuid4(),
+                                        longitude: position.coords.longitude,
+                                        latitude: position.coords.latitude
+                                    }),
+                                )
+                            })
+                        } else {
+                            console.log("track position DISABLED!!!")
+                        }
+                    }, 1000)
+        }
     })
 
- 
-    
+
+
     return (
-        <>
-            <div id="map"></div>
-        </>
-    )
+            <>
+                <div id="map"></div>
+            </>
+        )
 }

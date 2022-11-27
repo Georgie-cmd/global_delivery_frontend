@@ -24,6 +24,7 @@
     "react-map-gl": "^7.0.19",
     "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.1",
+    "reconnecting-websocket": "^4.4.0",
     "socket.io-client": "^4.5.4",
     "typescript": "^4.9.3",
     "web-vitals": "^2.1.4"

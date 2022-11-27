@@ -1,4 +1,5 @@
     /* user's location - endpoint */
 export default function userLocation(): string {
-    return 'http:localhost:8000/user:xxxx'
+    const user = 'xxxx'
+    return `user-location:${user}`
 }
